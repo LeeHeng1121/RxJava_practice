@@ -7,6 +7,8 @@ import android.util.Log;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
+import rx.functions.Action0;
+import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity {
     String tag = "MainActivity";
@@ -65,8 +67,43 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        observable1.subscribe(observer);
-        observable2.subscribe(observer);
+//        observable1.subscribe(observer);
+//        observable2.subscribe(observer);
+
+
+        Action1<String> onNextAction = new Action1<String>() {
+            // onNext()
+            @Override
+            public void call(String s) {
+                Log.d(tag, s);
+            }
+        };
+        Action1<Throwable> onErrorAction = new Action1<Throwable>() {
+            // onError()
+            @Override
+            public void call(Throwable throwable) {
+                // Error handling
+            }
+        };
+        Action0 onCompletedAction = new Action0() {
+            // onCompleted()
+            @Override
+            public void call() {
+                Log.d(tag, "completed");
+            }
+        };
+
+// 自动创建 Subscriber ，并使用 onNextAction 来定义 onNext()
+        Log.d(tag,"OnNext");
+        observable1.subscribe(onNextAction);
+// 自动创建 Subscriber ，并使用 onNextAction 和 onErrorAction 来定义 onNext() 和 onError()
+        Log.d(tag,"OnNext + OnError");
+        observable1.subscribe(onNextAction, onErrorAction);
+// 自动创建 Subscriber ，并使用 onNextAction、 onErrorAction 和 onCompletedAction 来定义 onNext()、 onError() 和 onCompleted()
+        Log.d(tag,"OnNext + OnError + OnCompleted");
+        observable1.subscribe(onNextAction, onErrorAction, onCompletedAction);
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
